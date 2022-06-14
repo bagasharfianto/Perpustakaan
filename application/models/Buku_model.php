@@ -2,31 +2,26 @@
 
 class Buku_model extends CI_Model{
   
-  public function CountDataBuku()
+  //Menjumlahkan data dengan inputan nama table
+  public function CountData($Table)
   {
-    return $this->db->count_all('buku');
+    return $this->db->count_all($Table);
   }
-  public function CountDataGolongan()
-  {
-    return $this->db->count_all("golongan");
-  }
-  public function CountDataPenerbit()
-  {
-    return $this->db->count_all("penerbit");
-  }
-  public function CountDataPengarang()
-  {
-    return $this->db->count_all("pengarang");
-  }
-  public function CountDataPemberian()
-  {
-    return $this->db->count_all("sumberperoleh");
-  }
-
+  
+  //Mencari data dengan inputan table
   public function find_all($tabel){
     return $this->db->get($tabel)->result_array();
   }
   
+  //Menampilkan Buku
+  public function findAllBooks(){
+    return $this->db->query('SELECT buku.TglMasukPerpus,buku.NoUrutBuku,buku.NoIndukBuku,pengarang.Pengarang,buku.JudulBuku,penerbit.Penerbit,buku.TahunTerbit,sumberperoleh.SumberPeroleh,buku.Golongan,buku.Keterangan from buku JOIN pengarang on buku.KodePengarang = pengarang.Kode_Pengarang JOIN penerbit on buku.KodePenerbit = penerbit.Kode_Penerbit JOIN sumberperoleh on buku.KodePemberian = sumberperoleh.Kode_Pemberian;')->result_array();
+  }
+
+  public function findBooksbyInput($input){
+    return $this->db->query('SELECT buku.TglMasukPerpus,buku.NoUrutBuku,buku.NoIndukBuku,pengarang.Pengarang,buku.JudulBuku,penerbit.Penerbit,buku.TahunTerbit,sumberperoleh.SumberPeroleh,buku.Golongan,buku.Keterangan from buku JOIN pengarang on buku.KodePengarang = pengarang.Kode_Pengarang JOIN penerbit on buku.KodePenerbit = penerbit.Kode_Penerbit JOIN sumberperoleh on buku.KodePemberian = sumberperoleh.Kode_Pemberian WHERE buku.NoUrutBuku = "'.$input.'";')->result_array();
+  }
+
   public function insert($Table,$Data){
     return $this->db->insert($Table,$Data);
   }

@@ -36,11 +36,11 @@
                         <td><?php echo $data['TglMasukPerpus'] ?></td>
                         <td><?php echo $data['NoUrutBuku'] ?></td>
                         <td><?php echo $data['NoIndukBuku'] ?></td>
-                        <td><?php echo $data['KodePengarang'] ?></td>
+                        <td><?php echo $data['Pengarang'] ?></td>
                         <td><?php echo $data['JudulBuku'] ?></td>
-                        <td><?php echo $data['KodePenerbit'] ?></td>
+                        <td><?php echo $data['Penerbit'] ?></td>
                         <td><?php echo $data['TahunTerbit'] ?></td>
-                        <td><?php echo $data['KodePemberian'] ?></td>
+                        <td><?php echo $data['SumberPeroleh'] ?></td>
                         <td><?php echo $data['Golongan'] ?></td>
                         <td><?php echo $data['Keterangan'] ?></td>
                         <td>
@@ -52,6 +52,15 @@
                 <?php   }  ?>
                 </tbody>
             </table>
+            <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+            </nav>
         </div>
     </div>
 </div>

@@ -10,10 +10,14 @@ class Dashboard extends CI_Controller{
 
   public function index()
   {
-    $data["SumBuku"] = $this->Buku_model->CountDataBuku();
-    $data["SumGolongan"] = $this->Buku_model->CountDataGolongan();
-    $data["SumPenerbit"] = $this->Buku_model->CountDataPenerbit();
-    $data["SumPengarang"] = $this->Buku_model->CountDataPengarang();
+    $table = 'buku';
+    $data["SumBuku"] = $this->Buku_model->CountData($table);
+    $table = 'golongan';
+    $data["SumGolongan"] = $this->Buku_model->CountData($table);
+    $table = 'penerbit';
+    $data["SumPenerbit"] = $this->Buku_model->CountData($table);
+    $table = 'pengarang';
+    $data["SumPengarang"] = $this->Buku_model->CountData($table);
     
    $this->load->view('Layouts/header');
    $this->load->view('Layouts/Menu');

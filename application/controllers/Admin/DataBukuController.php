@@ -11,7 +11,15 @@ class DataBukuController extends CI_Controller{
   public function index()
   {
     $tabel = 'buku';
-    $data['records'] = $this->Buku->find_all($tabel);
+    $data['records'] = $this->Buku->findAllBooks();
+    $this->load->library('pagination');
+
+    $config['base_url'] = 'http://localhost:800/Perpus/dataBuku';
+    $config['total_rows'] = 200;
+    $config['per_page'] = 10;
+
+    $this->pagination->initialize($config);
+    
 
     $this->load->view('Layouts/header');
     $this->load->view('Layouts/Menu');
@@ -40,7 +48,7 @@ class DataBukuController extends CI_Controller{
     if ($data["DBPengarang"]["Hasil"] >= 1) {
         $KodePengarang = $data["DBPengarang"]["Kode_Pengarang"] ;
     }else{
-      $count = $this->Buku->CountDataPengarang();
+      $count = $this->Buku->CountData($table);
       $count +=1;
       $KodePengarang = "PE_" . $count;
       $NamaPengarang = $NamaPengarang;
@@ -61,7 +69,7 @@ class DataBukuController extends CI_Controller{
     if ($data["DBpenerbit"]["Hasil"] >= 1) {
       $KodePenerbit = $data["DBpenerbit"]["Kode_Penerbit"] ;
     }else{
-      $count = $this->Buku->CountDataPenerbit();
+      $count = $this->Buku->CountData($table);
       $count +=1;
       $KodePenerbit = "PN_" . $count;
       $NamaPenerbit = $NamaPenerbit;
@@ -82,7 +90,7 @@ class DataBukuController extends CI_Controller{
     if ($data["DBSumberPeroleh"]["Hasil"] >= 1) {
       $KodePemberian = $data["DBSumberPeroleh"]["Kode_Pemberian"] ;
     }else{
-      $count = $this->Buku->CountDataPemberian();
+      $count = $this->Buku->CountData($table);
       $count +=1;
       $KodePemberian = "SP_" . $count;
       $NamaPemberian = $NamaPemberian;
@@ -114,9 +122,10 @@ class DataBukuController extends CI_Controller{
 
   function edit(){
     $id   = $this->uri->segment(4);
-    $data = $this->Buku->find_by_id($id);
+    $data['records'] = $this->Buku->findBooksbyInput($id);
     $tabel = 'golongan';
     $data['DataGolongan'] = $this->Buku->find_all($tabel);
+
     $this->load->view('Layouts/header');
     $this->load->view('Layouts/Menu');
     $this->load->view('Admin/DataBuku/edit',$data);
@@ -125,21 +134,97 @@ class DataBukuController extends CI_Controller{
 
   function edit_save(){
     $id = $this->input->post('Id');
+
+     //Pengecekan inputan Pengarang
+     $table = 'pengarang';
+     $kolom = 'pengarang';
+     $kolom2 = 'Kode_Pengarang';
+     $NamaPengarang =  $this->input->post('NamaPengarang');
+     $KodePengarang = "";
+     $data["DBPengarang"] =$this->Buku->find($table,$kolom,$kolom2,$NamaPengarang);
+     if ($data["DBPengarang"]["Hasil"] >= 1) {
+         $KodePengarang = $data["DBPengarang"]["Kode_Pengarang"] ;
+     }else{
+       $count = $this->Buku->CountData($table);
+       $count +=1;
+       $KodePengarang = "PE_" . $count;
+       $NamaPengarang = $NamaPengarang;
+       $data=[
+         'Kode_Pengarang' => $KodePengarang,
+         'pengarang' => $NamaPengarang
+       ];
+       $this->Buku->insert($table,$data);
+     }
+ 
+     //Pengecekan Penerbit
+     $table = 'penerbit';
+     $kolom = 'penerbit';
+     $kolom2= 'Kode_Penerbit';
+     $NamaPenerbit =  $this->input->post('NamaPenerbit');
+     $KodePenerbit = "";
+     $data["DBpenerbit"] =$this->Buku->find($table,$kolom,$kolom2,$NamaPenerbit);
+     if ($data["DBpenerbit"]["Hasil"] >= 1) {
+       $KodePenerbit = $data["DBpenerbit"]["Kode_Penerbit"] ;
+     }else{
+       $count = $this->Buku->CountData($table);
+       $count +=1;
+       $KodePenerbit = "PN_" . $count;
+       $NamaPenerbit = $NamaPenerbit;
+       $data=[
+         'Kode_Penerbit' => $KodePenerbit,
+         'penerbit' => $NamaPenerbit
+       ];
+       $this->Buku->insert($table,$data);
+     }
+ 
+    //Kode Pemberian
+     $table = 'sumberperoleh';
+     $kolom = 'SumberPeroleh';
+     $kolom2= 'Kode_Pemberian';
+     $NamaPemberian =  $this->input->post('NamaPemberian');
+     $KodePemberian = "";
+     $data["DBSumberPeroleh"] =$this->Buku->find($table,$kolom,$kolom2,$NamaPemberian);
+     if ($data["DBSumberPeroleh"]["Hasil"] >= 1) {
+       $KodePemberian = $data["DBSumberPeroleh"]["Kode_Pemberian"] ;
+     }else{
+       $count = $this->Buku->CountData($table);
+       $count +=1;
+       $KodePemberian = "SP_" . $count;
+       $NamaPemberian = $NamaPemberian;
+       $data=[
+         'Kode_Pemberian' => $KodePemberian,
+         'SumberPeroleh' => $NamaPemberian
+       ];
+       $this->Buku->insert($table,$data);
+     }
+ 
+     $data = [
+       'TglMasukPerpus' => $this->input->post('TglMasukPerpus'),
+       'NoUrutBuku' => $this->input->post('NoUrutBuku'),
+       'NoIndukBuku' => $this->input->post('NoIndukBuku'),
+       'KodePengarang' => $KodePengarang,
+       'JudulBuku' => $this->input->post('JudulBuku'),
+       'KodePenerbit' => $KodePenerbit,
+       'TahunTerbit' => $this->input->post('TahunTerbit'),
+       'KodePemberian' =>  $KodePemberian,
+       'Golongan' => $this->input->post('Golongan'),
+     ];
+     $table ='buku';
     
-    $data=[
-      'TglMasukPerpus' => $this->input->post('TglMasukPerpus'),
-      'NoUrutBuku' => $this->input->post('NoUrutBuku'),
-      'NoIndukBuku' => $this->input->post('NoIndukBuku'),
-      'KodePengarang' => $this->input->post('KodePengarang'),
-      'JudulBuku' => $this->input->post('JudulBuku'),
-      'KodePenerbit' => $this->input->post('KodePenerbit'),
-      'TahunTerbit' => $this->input->post('TahunTerbit'),
-      'Harga' => $this->input->post('Harga'),
-      'KodePemberian' => $this->input->post('KodePemberian'),
-      'Golongan' => $this->input->post('Golongan'),
-      'eksemplar' => $this->input->post('eksemplar'),
-      'Keterangan' => $this->input->post('Keterangan')
-    ];
+    // $data=[
+    //   'TglMasukPerpus' => $this->input->post('TglMasukPerpus'),
+    //   'NoUrutBuku' => $this->input->post('NoUrutBuku'),
+    //   'NoIndukBuku' => $this->input->post('NoIndukBuku'),
+    //   'KodePengarang' => $this->input->post('KodePengarang'),
+    //   'JudulBuku' => $this->input->post('JudulBuku'),
+    //   'KodePenerbit' => $this->input->post('KodePenerbit'),
+    //   'TahunTerbit' => $this->input->post('TahunTerbit'),
+    //   'Harga' => $this->input->post('Harga'),
+    //   'KodePemberian' => $this->input->post('KodePemberian'),
+    //   'Golongan' => $this->input->post('Golongan'),
+    //   'eksemplar' => $this->input->post('eksemplar'),
+    //   'Keterangan' => $this->input->post('Keterangan')
+    // ];
     $this->Buku->update($id,$data);
     redirect(base_url('dataBuku'));
   }
